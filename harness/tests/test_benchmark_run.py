@@ -347,20 +347,33 @@ def test_main_no_benchmarks(monkeypatch, tmp_path):
 
 def test_partial_judge_response_preserves_tally_denominator(monkeypatch, tmp_path):
     import types
+
     from local_harness.benchmark import judge, tally
 
     findings = [
-        {"finding_id": f"F{i}", "type": "synthetic", "description": "test case", "benchmark_file": "test.json"}
+        {
+            "finding_id": f"F{i}",
+            "type": "synthetic",
+            "description": "test case",
+            "benchmark_file": "test.json",
+        }
         for i in range(1, 4)
     ]
     results = tmp_path / "results"
     results.mkdir()
     (results / "README.md").write_text("Synthetic scanner report")
     monkeypatch.setattr(run, "STATE_FILE", str(tmp_path / "state.json"))
-    monkeypatch.setattr(judge, "_invoke_judge", lambda *args: types.SimpleNamespace(
-        returncode=0, stderr="", stdout='[{"finding_id":"F1","detected":true}]'
-    ))
-    state = {"scan_targets": {"toy": {"status": "scanned", "results_dir": str(results)}}, "judgments": {}}
+    monkeypatch.setattr(
+        judge,
+        "_invoke_judge",
+        lambda *args: types.SimpleNamespace(
+            returncode=0, stderr="", stdout='[{"finding_id":"F1","detected":true}]'
+        ),
+    )
+    state = {
+        "scan_targets": {"toy": {"status": "scanned", "results_dir": str(results)}},
+        "judgments": {},
+    }
     run.phase_judge({"toy": {"findings": findings}}, state)
     summary = tally.generate_tally(state)["summary"]
     assert summary["total_findings"] == 3

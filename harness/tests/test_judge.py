@@ -129,6 +129,7 @@ def test_partial_response_retains_requested_cases():
 
 def test_duplicate_verdict_is_error_regardless_of_order():
     import json
+
     for values in ((True, False), (False, True), (True, True)):
         raw = [{"finding_id": "F1", "detected": value} for value in values]
         out = judge._parse_judge_output(json.dumps(raw), FINDINGS)
@@ -147,9 +148,14 @@ def test_invalid_entries_cannot_add_benchmark_cases():
 
 def test_invalid_verdict_fields_are_errors():
     import json
+
     invalid = [
-        {}, {"detected": "false"}, {"detected": 1}, {"detected": 0},
-        {"detected": None}, {"detected": []},
+        {},
+        {"detected": "false"},
+        {"detected": 1},
+        {"detected": 0},
+        {"detected": None},
+        {"detected": []},
         {"detected": True, "confidence": []},
         {"detected": True, "reasoning": 42},
         {"detected": True, "matched_finding_id": {}},

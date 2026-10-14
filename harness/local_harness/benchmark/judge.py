@@ -268,11 +268,13 @@ def _reconcile_judgments(judgments, findings):
         if reason is None:
             reconciled.append(verdict)
         else:
-            reconciled.append({
-                "finding_id": fid,
-                "detected": None,
-                "confidence": None,
-                "reasoning": reason,
-                "matched_finding_id": None,
-            })
+            reconciled.append(
+                {
+                    "finding_id": fid,
+                    "detected": None,
+                    "confidence": None,
+                    "reasoning": reason,
+                    "matched_finding_id": None,
+                }
+            )
     return reconciled
